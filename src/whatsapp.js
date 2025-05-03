@@ -1,7 +1,8 @@
-const { default: makeWASocket, BufferJSON, initInMemoryKeyStore, DisconnectReason, useMultiFileAuthState, Browsers, delay } = require('@adiwajshing/baileys');
+const { default: makeWASocket, BufferJSON, DisconnectReason, useMultiFileAuthState, Browsers } = require('@adiwajshing/baileys');
 const path = require('path');
 const fs = require('fs');
 const qrcode = require('qrcode-terminal');
+const logger = require('pino')(); // Add this line for proper logging
 
 module.exports = function(io) {
     let socket = null;
@@ -29,11 +30,12 @@ module.exports = function(io) {
         const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
 
         const sock = makeWASocket({
-            logger: { level: 'silent' },
+            logger: logger, // Use the proper logger
             printQRInTerminal: false,
             browser: Browsers.macOS("Firefox"),
+            auth: state,
             syncFullHistory: true,
-            auth: state
+            version: [2, 2413, 1] // Specify WhatsApp version
         });
 
         sock.ev.on('creds.update', saveCreds);
@@ -51,12 +53,12 @@ module.exports = function(io) {
 
             if (connection === 'close') {
                 const shouldReconnect = (lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut);
-                console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
+                console.log('Connection closed, reconnecting...', shouldReconnect);
                 if (shouldReconnect) {
                     connectToWhatsApp();
                 }
             } else if (connection === 'open') {
-                console.log('opened connection');
+                console.log('WhatsApp connection opened');
                 sessionId = sock.authState.creds.me?.id;
                 if (socket) {
                     socket.emit('connected', sessionId);
@@ -65,13 +67,13 @@ module.exports = function(io) {
         });
 
         sock.ev.on('messages.upsert', ({ messages }) => {
-            console.log('received messages', messages);
+            console.log('Received messages:', messages);
         });
 
         return sock;
     }
 
-    connectToWhatsApp().catch(err => console.log(err));
+    connectToWhatsApp().catch(err => console.log('Connection error:', err));
 
     return {
         getSessionId: () => sessionId
