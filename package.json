@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "WhatsApp Bot using Baileys",
   "main": "src/index.js",
+    "engines" : { 
+    "npm" : ">=9.7.2",
+    "node" : "23.x"
+    },
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
