@@ -1,25 +1,22 @@
-FROM node:18-alpine
+FROM node:18-slim
 
-# Install required dependencies
-RUN apk add --no-cache \
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    git \
     python3 \
     make \
     g++ \
-    git \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    giflib-dev
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps --production
 
 COPY . .
 
-# Create directory for auth info
 RUN mkdir -p auth_info_baileys
 
 ENV PORT=3000
