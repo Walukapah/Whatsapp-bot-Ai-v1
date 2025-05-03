@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-# Install required dependencies including git
+# Install required dependencies
 RUN apk add --no-cache \
     python3 \
     make \
@@ -15,11 +15,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Install npm packages
 RUN npm install --legacy-peer-deps
 
 COPY . .
 
-EXPOSE 8080
+# Create directory for auth info
+RUN mkdir -p auth_info_baileys
+
+ENV PORT=3000
+EXPOSE 3000
 
 CMD ["npm", "start"]
