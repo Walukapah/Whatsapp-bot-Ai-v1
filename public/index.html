@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Bot Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>WhatsApp Bot Login</h1>
+        <div id="login-section">
+            <input type="text" id="phone-number" placeholder="Enter WhatsApp number (with country code)">
+            <button id="login-btn">Login</button>
+        </div>
+        <div id="qr-section" class="hidden">
+            <p>Scan this QR code with WhatsApp</p>
+            <div id="qr-code"></div>
+        </div>
+        <div id="session-section" class="hidden">
+            <p>You're now connected!</p>
+            <p>Session ID:</p>
+            <div id="session-id" class="session-box"></div>
+            <button id="copy-btn">Copy Session ID</button>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
